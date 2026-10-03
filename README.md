@@ -1,4 +1,4 @@
-# Slack contact form webhook ‚Äî Formspree alternative with AI spam filtering
+# Slack contact form webhook ‚Ä?Formspree alternative with AI spam filtering
 
 Receive SmartForm webhook events and forward every new submission to a Slack channel
 as a Block Kit message.
@@ -8,17 +8,17 @@ as a Block Kit message.
 SmartForm POSTs a JSON event to your webhook URL on every submission.
 The body mirrors the same field structure as the public form endpoint:
 
-**Your submission fields** ‚Äî `name`, `email`, `message`, etc.
+**Your submission fields** ‚Ä?`name`, `email`, `message`, etc.
 exactly as the form sent them.
 
-**Reserved fields** ‚Äî names starting with `_` are stripped before
+**Reserved fields** ‚Ä?names starting with `_` are stripped before
 the webhook fires (they are control fields, not user data). The
 honeypot drop (`_gotcha` filled) means the webhook is **not** called
-‚Äî the submission is silently discarded.
+‚Ä?the submission is silently discarded.
 
 | Field | In webhook payload? | Notes |
 |---|---|---|
-| ``_gotcha`` | No | Drop trigger ‚Äî never sent. |
+| ``_gotcha`` | No | Drop trigger ‚Ä?never sent. |
 | ``_next`` | No | UX control, stripped. |
 | ``_subject`` | No | UX control, stripped. |
 | `submission_id` | Yes (added) | Server-generated UUID for idempotency. |
@@ -26,14 +26,14 @@ honeypot drop (`_gotcha` filled) means the webhook is **not** called
 | `intent` | Yes (added) | `sales` / `support` / `inquiry` / `spam` (Pro). |
 | `timestamp` | Yes (added) | Server time in ISO 8601. |
 
-Field names are Formspree-compatible ‚Äî the SmartForm form
+Field names are Formspree-compatible ‚Ä?the SmartForm form
 endpoint and your webhook use the same conventions.
 
 ## How it works
 
 ```
-Browser  ‚Üí  SmartForm AI  ‚Üí  POST this Vercel function  ‚Üí  Slack incoming webhook
-                                       ‚îÇ
+Browser  ‚Ü? SmartForm AI  ‚Ü? POST this Vercel function  ‚Ü? Slack incoming webhook
+                                       ‚î?
                                        ‚îî‚îÄ verifies X-SmartForm-Signature
                                           before forwarding
 ```
@@ -47,11 +47,11 @@ Browser  ‚Üí  SmartForm AI  ‚Üí  POST this Vercel function  ‚Üí  Slack incoming 
 
 ## Setup
 
-1. Create a Slack incoming webhook: https://api.slack.com/messaging/webhooks ‚Üí pick a
-   channel ‚Üí Copy URL.
+1. Create a Slack incoming webhook: https://api.slack.com/messaging/webhooks ‚Ü?pick a
+   channel ‚Ü?Copy URL.
 2. Clone, install, configure, deploy:
    ```bash
-   git clone https://github.com/yanghuai123456/smartform-example-webhook-slack.git
+   git clone https://github.com/smartformai/smartform-example-webhook-slack.git
    cd smartform-example-webhook-slack
    npm install
    vercel link
@@ -65,7 +65,7 @@ Browser  ‚Üí  SmartForm AI  ‚Üí  POST this Vercel function  ‚Üí  Slack incoming 
 ## The function
 
 ```ts
-// api/webhook.ts ‚Äî Vercel Edge Function
+// api/webhook.ts ‚Ä?Vercel Edge Function
 export const config = { runtime: 'edge' };
 
 export default async function handler(req: Request) {
@@ -87,7 +87,7 @@ export default async function handler(req: Request) {
 
   const blocks = [
     { type: 'header', text: { type: 'plain_text',
-        text: s.is_high_value ? 'üî• High-value lead' : (s.is_spam ? 'üõ°Ô∏è Spam submission' : 'New form submission') } },
+        text: s.is_high_value ? 'üî• High-value lead' : (s.is_spam ? 'üõ°Ô∏?Spam submission' : 'New form submission') } },
     { type: 'section', text: { type: 'mrkdwn', text: s.ai_summary || '_(no AI summary)_' } },
     ...(fields.length ? [{ type: 'section', fields }] : []),
     { type: 'context', elements: [
@@ -104,7 +104,7 @@ export default async function handler(req: Request) {
 }
 ```
 
-`verifySignature()` is in `lib/verify.ts` ‚Äî it recomputes HMAC-SHA256 with your shared
+`verifySignature()` is in `lib/verify.ts` ‚Ä?it recomputes HMAC-SHA256 with your shared
 secret and compares it to the `X-SmartForm-Signature: sha256=<hex>` header.
 
 ## Webhook payload (from SmartForm)
@@ -148,7 +148,7 @@ curl -X POST http://localhost:3000/api/webhook \
 
 Yes. AI spam filtering is enabled by default on every plan. AI intent
 classification and high-value lead detection require a paid plan (Pro
-or Business) ‚Äî the dashboard enforces this and returns HTTP 402 if
+or Business) ‚Ä?the dashboard enforces this and returns HTTP 402 if
 you try to enable them on a free workspace.
 
 ### Do I need an API key?
@@ -161,7 +161,7 @@ form ID, which is non-enumerable. The example also includes a hidden
 No. This is a Slack-format *sender* (it POSTs to a Slack-compatible webhook after receiving a SmartForm event), not a Slack event receiver. For receiver-side verification, see the SmartForm docs.
 
 ## Related examples
-[Discord webhook example](https://github.com/yanghuai123456/smartform-example-webhook-discord) | [SmartForm JS SDK](https://github.com/yanghuai123456/smartform-js)
+[Discord webhook example](https://github.com/smartformai/smartform-example-webhook-discord) | [SmartForm JS SDK](https://github.com/smartformai/smartform-js)
 
 
 ## License
